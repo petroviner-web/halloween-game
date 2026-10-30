@@ -12,13 +12,14 @@ export const STEP_MS = 1000 / 60;
 export const CANVAS = { width: 800, height: 300 } as const;
 
 /**
- * The look: near-white background, dark grey foreground, and one red accent
- * used only for the game-over puddle (functional spec 2.9).
+ * The look (Halloween edition): deep midnight sky, warm cream foreground that
+ * reads well on dark, and a pumpkin-orange accent used for the game-over
+ * puddle and the secret-mode badge.
  */
 export const PALETTE = {
-  bg: '#f7f7f7',
-  fg: '#535353',
-  accent: '#c4302b',
+  bg: '#0b1030',
+  fg: '#f0e6d2',
+  accent: '#ff8c1a',
 } as const;
 
 /**

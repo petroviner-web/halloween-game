@@ -3,8 +3,10 @@
 // the canvas and requestAnimationFrame. Everything else stays testable in Node.
 
 import { createBus } from './events.js';
+import { installNightSky } from './features/night-sky.js';
 import { installPuddle } from './features/puddle.js';
 import { installSecretMode } from './features/secret-mode.js';
+import { installSpookiness } from './features/spookiness.js';
 import { createGame } from './game.js';
 import { createKeyboard } from './input.js';
 import { attachKeyboard } from './input-dom.js';
@@ -95,7 +97,9 @@ const canvas = findCanvas();
 fitCanvas(canvas);
 const renderer = createRenderer(canvas);
 // Cosmetic features plug in from outside the game loop (architecture 2.2).
+installNightSky({ game, renderer });
 installPuddle({ game, renderer });
+installSpookiness({ game, renderer });
 
 // Konami-code secret mode. The listener lives here (DOM-level) and the feature
 // reads the flag through a getter, keeping src/features/ DOM-free.

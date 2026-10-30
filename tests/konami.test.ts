@@ -9,7 +9,7 @@ const feed = (codes: readonly string[]): boolean[] => {
 describe('createKonamiMatcher', () => {
   it('returns true on the step that completes the sequence', () => {
     const results = feed(KONAMI_SEQUENCE);
-    expect(results.slice(0, -1).every((v) => v === false)).toBe(true);
+    expect(results.slice(0, -1).every((v) => !v)).toBe(true);
     expect(results.at(-1)).toBe(true);
   });
 
