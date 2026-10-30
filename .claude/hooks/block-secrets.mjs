@@ -11,7 +11,7 @@
 // breaks a session.
 
 import { readFileSync } from 'node:fs';
-import { isAbsolute, relative, resolve } from 'node:path';
+import { isAbsolute, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
   ADVICE,
@@ -117,7 +117,7 @@ export function decide(payload, env) {
   if (!content) return null;
   const path = text(input, 'file_path') || text(input, 'notebook_path');
   const absolute = resolve(env.projectDir, path);
-  const inside = relative(env.projectDir, absolute);
+  const inside = relative(env.projectDir, absolute).split(sep).join('/');
   if (inside.startsWith('..') || isAbsolute(inside)) return null;
   if (env.isIgnored(absolute)) return null;
 
