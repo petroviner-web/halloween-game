@@ -4,9 +4,11 @@
 
 import { createBus } from './events.js';
 import { installPuddle } from './features/puddle.js';
+import { installSecretMode } from './features/secret-mode.js';
 import { createGame } from './game.js';
 import { createKeyboard } from './input.js';
 import { attachKeyboard } from './input-dom.js';
+import { createKonamiMatcher } from './konami.js';
 import { backingSize, createRenderer } from './render.js';
 import { parseSeed } from './rng.js';
 import { createMemoryStore, createStorageStore } from './store.js';
@@ -94,6 +96,17 @@ fitCanvas(canvas);
 const renderer = createRenderer(canvas);
 // Cosmetic features plug in from outside the game loop (architecture 2.2).
 installPuddle({ game, renderer });
+
+// Konami-code secret mode. The listener lives here (DOM-level) and the feature
+// reads the flag through a getter, keeping src/features/ DOM-free.
+let secretActive = false;
+const konami = createKonamiMatcher();
+window.addEventListener('keydown', (event) => {
+  if (konami.step(event.code)) {
+    secretActive = !secretActive;
+  }
+});
+installSecretMode({ renderer, isActive: () => secretActive });
 // Each run gets a fresh keyboard, so a key still held from the crash does not
 // count as already pressed in the next run.
 function bindKeyboard(): void {
@@ -104,11 +117,15 @@ function bindKeyboard(): void {
 bindKeyboard();
 game.on('restart', bindKeyboard);
 
-// 5. Read-only hook for end-to-end tests. Frozen so page code cannot replace it.
+// 5. Read-only hook for end-to-end tests. Frozen so page code cannot replace it;
+// `secret` is a getter so it tracks the live flag.
 window.__dino = Object.freeze({
   state: () => game.state(),
   seed,
   version: 1,
+  get secret() {
+    return secretActive;
+  },
 });
 
 // 6. Animation loop. Re-arm first: if a frame throws, the next one still runs.
